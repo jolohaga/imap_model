@@ -1,6 +1,6 @@
 = imap_model
 
-Description goes here.
+An ActiveModel-based IMAP implementation for use in Rails applications.
 
 == Note on Patches/Pull Requests
  
