@@ -1,5 +1,1 @@
-require 'net/imap'
-
-class ImapModel
-  
-end
+require 'imap_model/engine' if defined?(Rails) && Rails::VERSION::MAJOR == 3
