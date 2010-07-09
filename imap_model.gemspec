@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "imap_model.gemspec",
+     "lib/app/models/imap.rb",
      "lib/imap_model.rb",
      "lib/imap_model/engine.rb",
      "spec/imap_model_spec.rb",
