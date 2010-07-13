@@ -2,16 +2,26 @@
 
 An ActiveModel-based IMAP implementation for use in Rails applications.
 
+== What it does:
+
+  1. Provides a sugar coated wrapper around NET::IMAP
+  2. Search criteria keywords are methods
+  3. Search criteria methods can be chained
+  4. Reads mail settings from YAML file, code, session, cookies
+  5. Remembers mail settings
+  6. Keeps connection persistent
+  7. Provides helpers for views
+
 == Note on Patches/Pull Requests
  
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
-
+  * Fork the project.
+  * Make your feature addition or bug fix.
+  * Add tests for it. This is important so I don't break it in a
+    future version unintentionally.
+  * Commit, do not mess with rakefile, version, or history.
+    (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+  * Send me a pull request. Bonus points for topic branches.
+  
 == Copyright
 
 Copyright (c) 2010 Jose Hales-Garcia. See LICENSE for details.
