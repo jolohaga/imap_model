@@ -1,5 +1,5 @@
 require 'core_extensions'
-module Mail
+module MailServer
   class IMAP
     # Mail::IMAP
     #
@@ -7,7 +7,7 @@ module Mail
     #   Wrapper around Net::IMAP
     #
     require 'net/imap'
-    attr_accessor :settings, :connection, :query, :authenticated
+    attr_accessor :settings, :connection, :query, :authenticated, :messages
     attr_reader :access, :folder, :before, :body, :cc, :from, :on, :since, :subject, :to
     
     # Initialize an IMAP object.
@@ -53,22 +53,40 @@ module Mail
     #
     def open(args = {:folder => 'INBOX', :access => 'read-only'})
       self.settings.merge!(args)
+      connect
+      if settings[:access] == 'read-write'
+        @connection.select(settings[:folder])
+      else
+        @connection.examine(settings[:folder])
+      end
+      yield(self) if block_given?
+    end
+    
+    def connect
       @connection ||= Net::IMAP.new(settings[:address])
-      at_exit {
-        connection.disconnect
-      }
       begin
         @connection.authenticate(settings[:authentication],settings[:username],settings[:password]) unless authenticated
         @authenticated = true
-        if settings[:access] == 'read-write'
-          @connection.select(settings[:folder])
-        else
-          @connection.examine(settings[:folder])
-        end
-        yield(self) if block_given?
       rescue Net::IMAP::NoResponseError
-        "Failed to authenticate."
+        "Failed to authenticate"
       end
+      at_exit {
+        begin
+          disconnect
+        rescue Exception => e
+          "Error closing connection: #{e.class}: #{e.message}."
+        end
+      }
+    end
+    
+    def disconnect
+      @connection.disconnect
+      @connection = nil
+      @authenticated = false
+    end
+    
+    def connected?
+      ! connection.nil? && ! connection.disconnected?
     end
     
     def access(access = 'read-only')
@@ -124,8 +142,8 @@ module Mail
       self
     end
     
-    def search
-      scratch = query.clone
+    def search(criteria = nil)
+      scratch = criteria.nil? ? query.clone : criteria
       clear_query
       connection.search(scratch)
     end
@@ -134,15 +152,12 @@ module Mail
       @query = []
     end
     
-    def fetch(arr = [])
-      connection.fetch(arr,['BODY']) unless arr.empty?
+    def fetch(seq_nos = [],attributes = 'BODY')
+      @messages = connection.fetch(seq_nos,attributes) unless seq_nos.empty?
     end
     
     def uid_fetch(arr = [])
       
     end
-  end
-  
-  class Message
   end
 end
